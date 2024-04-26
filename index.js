@@ -67,10 +67,17 @@ async function run() {
      let result=await cursor.toArray()
      res.send(result)
     })
+
+
+
     app.post('/crafts',async(req,res)=>{
+      
       const result = await craftsCollection.insertOne(req.body);
+
       res.send(result)
     })
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -79,7 +86,7 @@ async function run() {
     // await client.close();
   }
 }
-run().catch(console.dir);
+run().catch(console.dir); 
 
 
 app.listen(port,(req,res)=>{

@@ -1,21 +1,21 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const express=require('express')
-const cors=require('cors')
+const express = require('express')
+const cors = require('cors')
 require('dotenv').config();
-const port=process.env.PORT || 4545;
-const app=express()
+const port = process.env.PORT || 4545;
+const app = express()
 
 app.use(cors())
 app.use(express.json())
 
-app.get('/',(req,res)=>{
-    res.send('server is running')
+app.get('/', (req, res) => {
+  res.send('server is running')
 })
 
 // git config http.postBuffer 524288000
 
 
-const uri =`mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASS}@cluster0.oypj9vn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASS}@cluster0.oypj9vn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 // console.log(uri);
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -31,13 +31,13 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const database = client.db("craftsDB");
-    const craftsCollection= database.collection('crafts')
+    const craftsCollection = database.collection('crafts')
     // console.log(craftsCollection);
 
-    app.get('/crafts/:id',async(req,res)=>{
-      let id=req.params.id
-      const query={_id:new ObjectId(id) }
-      let result =await craftsCollection.findOne(query)
+    app.get('/crafts/:id', async (req, res) => {
+      let id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      let result = await craftsCollection.findOne(query)
       res.send(result)
       console.log(result);
     })
@@ -62,18 +62,38 @@ async function run() {
 
     // })
 
-    app.get('/crafts',async(req,res)=>{
-      let cursor= craftsCollection.find()
-     let result=await cursor.toArray()
-     res.send(result)
+    app.get('/crafts', async (req, res) => {
+      let cursor = craftsCollection.find()
+      let result = await cursor.toArray()
+      res.send(result)
     })
 
 
 
-    app.post('/crafts',async(req,res)=>{
-      
+    app.post('/crafts', async (req, res) => {
       const result = await craftsCollection.insertOne(req.body);
+      res.send(result)
+    })
 
+    app.put('/crafts/:id', async(req, res) => {
+      let item = req.body
+      let id = req.params.id
+      let filter = { _id: new ObjectId(id) }
+      let options = { upsert: true }
+      let updatedItem = {
+        $set: {
+
+              image:item.image,
+              item_name:item.item_name,
+              subcategory_Name:item.subcategory_Name,
+              price:item.price,
+              rating:item.rating,
+              customization:item.customization,
+              processing_time:item.processing_time,
+              stockStatus:item.stockStatus
+        }
+      }
+      let result =await craftsCollection.updateOne(filter,updatedItem,options)
       res.send(result)
     })
 
@@ -86,9 +106,9 @@ async function run() {
     // await client.close();
   }
 }
-run().catch(console.dir); 
+run().catch(console.dir);
 
 
-app.listen(port,(req,res)=>{
-    console.log(`server is running in PORT: ${port}`);
+app.listen(port, (req, res) => {
+  console.log(`server is running in PORT: ${port}`);
 })

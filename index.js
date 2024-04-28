@@ -59,8 +59,16 @@ async function run() {
       res.send(result)
       // console.log(result);
     })
+
+    app.get('/viewdetails/:id', async (req, res) => {
+      let id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      let result = await craftsCollection.findOne(query)
+      res.send(result)
+      // console.log(result);
+    })
    
-     
+  
 
     // find many wise email 
 
@@ -76,9 +84,14 @@ async function run() {
       let result = await cursor.toArray()
       res.send(result)
     })
+    app.get('/craftitems', async (req, res) => {
+      let cursor = craftsCollection.find()
+      let result = await cursor.toArray()
+      res.send(result)
+    })
 
-    
-    app.post('/craftitems', async (req, res) => {
+  
+    app.post('/crafts', async (req, res) => {
       const result = await craftsCollection.insertOne(req.body);
       res.send(result)
       console.log(result);

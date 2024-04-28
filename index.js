@@ -36,7 +36,19 @@ async function run() {
     // await client.connect();
     const database = client.db("craftsDB");
     const craftsCollection = database.collection('crafts')
+    const mysubcategory = client.db("subcategoryDB");
+    const categoryCollection = mysubcategory.collection('category')
     // console.log(craftsCollection);
+
+
+    // subcategory found
+
+    app.get('/subcategorydata',async(req,res)=>{
+      let cursor = categoryCollection.find();
+      let result = await cursor.toArray();
+      res.send(result);
+    })
+
 
     app.get('/mycrafts/:email',async(req,res)=>{
       console.log(req.params); 

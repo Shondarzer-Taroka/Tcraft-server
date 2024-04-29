@@ -49,6 +49,32 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/viewsub/:subname',async(req,res)=>{
+      let result=await craftsCollection.find({subcategory_Name:req.params.subname}).toArray();
+      res.send(result)
+    })
+
+
+    app.get('/myfilterno/:email',async(req,res)=>{
+      let email=req.params.email 
+      let result= await craftsCollection.aggregate([
+        {
+          $match:{customization:'No',email:email}
+        }
+      ]).toArray();
+      res.send(result)
+    })
+
+    app.get('/myfilteryes/:email',async(req,res)=>{
+      let email=req.params.email 
+      let result= await craftsCollection.aggregate([
+        {
+          $match:{customization:'Yes',email:email}
+        }
+      ]).toArray();
+      res.send(result)
+    })
+    // subcategory found end
 
     app.get('/mycrafts/:email',async(req,res)=>{
       console.log(req.params); 
